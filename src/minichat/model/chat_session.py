@@ -1,3 +1,4 @@
+from minichat.core.events import Event
 from __future__ import annotations
 
 from typing import Any, Optional
@@ -34,18 +35,21 @@ class ChatSession(Observable):
         self._messages.append(
             Message(role=role, content=content, meta=meta or {})
         )
-        self._notify("messages_updated", {})
+        """self._notify("messages_updated", {})"""
+        self._notify(Event.MESSAGES_UPDATED, {})
 
     def delete_at(self, index: int) -> None:
         """Delete a message by its index if it exists."""
         if 0 <= index < len(self._messages):
             del self._messages[index]
-            self._notify("messages_updated", {})
+            """self._notify("messages_updated", {})"""
+            self._notify(Event.MESSAGES_UPDATED, {})
 
     def clear(self) -> None:
         """Remove all messages from the session."""
         self._messages.clear()
-        self._notify("messages_updated", {})
+        """self._notify("messages_updated", {})"""
+        self._notify(Event.MESSAGES_UPDATED, {})
 
     def all(self) -> list[Message]:
         """Return a shallow copy of the message list."""
