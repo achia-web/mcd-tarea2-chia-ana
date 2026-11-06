@@ -11,6 +11,7 @@ from minichat.core.observable import Observable
 from minichat.model.chat_session import ChatSession
 from minichat.model.generation_config import GenerationConfig
 from minichat.model.role import Role
+from minichat.core.events import Event
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +116,7 @@ class ChatController(Observable):
 
         # 2. Store the user turn
         self._session.add(Role.USER, text)
-        self._notify("generating_start", {})
+        self._notify(Event.GENERATING_START, {})
 
         # 3. Call the backend and measure latency
         started = time.perf_counter()
@@ -123,7 +124,7 @@ class ChatController(Observable):
             reply = self._backend.reply(self._session, self._cfg)
         except Exception as exc:
             self._log.exception("Backend error during reply")
-            self._notify("generating_error", {"error": str(exc)})
+            self._notify(Event.GENERATING_ERROR, {})
             return
         elapsed_ms = int((time.perf_counter() - started) * 1000)
 
@@ -139,7 +140,7 @@ class ChatController(Observable):
 
         # 5. Store the assistant turn
         self._session.add(Role.ASSISTANT, reply, meta=meta)
-        self._notify("generating_done", {"reply": reply})
+        self._notify(Event.GENERATING_DONE, {})
 
     def add_assistant(self, text: str) -> None:
         """Manually append an assistant message (no generation)."""
@@ -147,7 +148,7 @@ class ChatController(Observable):
         if not text:
             return
         self._session.add(Role.ASSISTANT, text)
-        self._notify("messages_updated", {})
+        self._notify(Event.MESSAGES_UPDATED, {})
 
     def add_system(self, text: str) -> None:
         """Append a system message."""
@@ -155,17 +156,17 @@ class ChatController(Observable):
         if not text:
             return
         self._session.add(Role.SYSTEM, text)
-        self._notify("messages_updated", {})
+        self._notify(Event.MESSAGES_UPDATED, {})
 
     def delete_at(self, index: int) -> None:
         """Delete the message at the given index."""
         self._session.delete_at(index)
-        self._notify("messages_updated", {})
+        self._notify(Event.MESSAGES_UPDATED, {})
 
     def clear_all(self) -> None:
         """Remove every message from the session."""
         self._session.clear()
-        self._notify("messages_updated", {})
+        self._notify(Event.MESSAGES_UPDATED, {})
 
     def get_observer_count(self) -> int:
         """Return the number of subscribed observers."""
@@ -180,7 +181,7 @@ class ChatController(Observable):
         data = self._session.get_summary()
         with open(path, "w", encoding="utf-8") as fh:
             json.dump(data, fh, ensure_ascii=False, indent=2)
-        self._notify("export_done", {"path": path})
+        self._notify(Event.EXPORT_DONE, {"path": path})
 
     def _validate_text(self, text: Optional[str]) -> str:
         """Return the stripped text, or '' when it is None/blank."""
