@@ -1,5 +1,6 @@
-from minichat.core.events import Event
 from __future__ import annotations
+
+from minichat.core.events import Event
 
 from typing import Any, Optional
 
