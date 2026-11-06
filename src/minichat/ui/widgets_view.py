@@ -190,11 +190,12 @@ class WidgetsView(Observer):
     def _refresh_selector(self) -> None:
         opts: List[Tuple[str, int]] = []
         for i, m in enumerate(self._session.all()):
-            hhmm = m.timestamp.strftime("%H:%M:%S")
+            """hhmm = m.timestamp.strftime("%H:%M:%S")
             text = m.content
             preview = f"{text[:30]}…" if len(text) > 30 else text
             label = f"{i}: [{hhmm}] {m.role.value}: {preview}"
-            opts.append((label, i))
+            opts.append((label, i))"""
+            opts = [ (f"{i}:{message.summary()}",i)  for i, message in enumerate (self._session.all()) ]
         self.sel_index.options = opts
         if opts:
             current = self.sel_index.value
