@@ -87,3 +87,10 @@ class ChatSession(Observable):
     def has_observers(self) -> bool:
         """Check if there are any subscribed observers."""
         return len(self._observers) > 0
+
+    def _last_assistant_text(session: ChatSession) -> str | None:
+        """Return the content of the most recent assistant message, if any."""
+        for m in reversed(session.all()):
+            if m.role == Role.ASSISTANT:
+                return m.content
+        return None
