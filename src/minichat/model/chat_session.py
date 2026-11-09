@@ -69,7 +69,6 @@ class ChatSession(Observable):
         ]
 
 
-
     def _last_assistant_text(session: ChatSession) -> str | None:
         """Return the content of the most recent assistant message, if any."""
         for m in reversed(session.all()):

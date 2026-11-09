@@ -28,7 +28,7 @@ def main(backend_name: str = "echo") -> None:
         except Exception as e:
             print(f"[backend error] {e}")
             continue
-        reply = session.last_assistant_text() or "(no reply)"
+        reply = session._last_assistant_text() or "(no reply)"
         print("Bot:", reply)
 
 
