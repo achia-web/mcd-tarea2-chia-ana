@@ -158,7 +158,7 @@ class ChatController(Observable):
 
     def export_json(self, path: str = "chat_transcript.json") -> None:
         """Export the conversation transcript as JSON."""
-        data = self._session.get_summary()
+        data = self._session.as_public()
         with open(path, "w", encoding="utf-8") as fh:
             json.dump(data, fh, ensure_ascii=False, indent=2)
         self._notify(Event.EXPORT_DONE, {"path": path})
