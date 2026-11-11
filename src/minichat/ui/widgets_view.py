@@ -41,7 +41,7 @@ class WidgetsView(Observer):
 
         # Initial render
         self._render()
-        self._handlers{
+        self._handlers = {
             Event.GENERATING_START: self._on_generating_start,
             Event.GENERATING_DONE: self._on_generating_done,
             Event.GENERATING_ERROR: self._on_generating_error,
